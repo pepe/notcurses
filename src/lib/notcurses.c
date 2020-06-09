@@ -792,11 +792,17 @@ notcurses* notcurses_init(const notcurses_options* opts, FILE* outfp){
   ret->inputbuf_valid_starts = 0;
   ret->inputbuf_write_at = 0;
   ret->input_events = 0;
+  if((ret->loglevel = opts->loglevel) > NCLOGLEVEL_TRACE || ret->loglevel < 0){
+    fprintf(stderr, "Invalid loglevel %d\n", ret->loglevel);
+    free(ret);
+    return NULL;
+  }
   if((ret->ttyfd = fileno(ret->ttyfp)) < 0){
     fprintf(stderr, "No file descriptor was available in outfp %p\n", outfp);
     free(ret);
     return NULL;
   }
+  is_linux_console(ret);
   notcurses_mouse_disable(ret);
   if(tcgetattr(ret->ttyfd, &ret->tpreserved)){
     fprintf(stderr, "Couldn't preserve terminal state for %d (%s)\n",
@@ -854,7 +860,6 @@ notcurses* notcurses_init(const notcurses_options* opts, FILE* outfp){
     term_verify_seq(&ret->tcache.rmcup, "rmcup");
   }
   ret->bottom = ret->top = ret->stdscr = NULL;
-  ret->loglevel = opts->loglevel;
   if(ncvisual_init(ffmpeg_log_level(ret->loglevel))){
     goto err;
   }
