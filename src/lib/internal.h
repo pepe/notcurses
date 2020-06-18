@@ -762,6 +762,7 @@ bool is_linux_console(const notcurses* nc);
 // logging
 void nclog(const char* fmt, ...);
 #define logerror(nc, fmt, ...) do{ if(nc->loglevel >= NCLOGLEVEL_ERROR){ nclog(__FILE__ ":%d: " fmt, __LINE__, ##__VA_ARGS__); } }while(0);
+#define logdebug(nc, fmt, ...) do{ if(nc->loglevel >= NCLOGLEVEL_DEBUG){ nclog(__FILE__ ":%d: " fmt, __LINE__, ##__VA_ARGS__); } }while(0);
 #define loginfo(nc, fmt, ...) do{ if(nc->loglevel >= NCLOGLEVEL_INFO){ nclog(__FILE__ ":%d: " fmt, __LINE__, ##__VA_ARGS__); } }while(0);
 
 #ifdef __cplusplus
